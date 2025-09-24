@@ -1,0 +1,31 @@
+[Unit]
+Description=Forward incoming SMS to Telegram group
+After=ModemManager.service
+Wants=ModemManager.service
+
+[Service]
+Type=simple
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin
+EnvironmentFile=/etc/sms2tg.env
+
+# 主程式
+ExecStart=/usr/local/bin/sms-to-telegram.sh
+
+# 確保自動重啟
+Restart=always
+RestartSec=3
+# 若腳本真的 exit 0，依然重啟
+SuccessExitStatus=0
+
+# 記錄到 journal，方便 debug
+StandardOutput=journal
+StandardError=journal
+
+# 安全性（可選）
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
